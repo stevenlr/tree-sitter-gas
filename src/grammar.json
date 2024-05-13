@@ -99,7 +99,7 @@
     },
     "label": {
       "type": "PATTERN",
-      "value": "[a-zA-Z_\\.\\$][a-zA-Z0-9_\\.\\$]*:"
+      "value": "([a-zA-Z_\\.\\$][a-zA-Z0-9_\\.\\$]*|[0-9]):"
     },
     "directive": {
       "type": "SEQ",
@@ -486,28 +486,42 @@
       ]
     },
     "_operand_symbol": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": "[a-zA-Z_\\.][a-zA-Z0-9_\\.\\$]*"
+              },
+              "named": true,
+              "value": "symbol"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "operand_modifier"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
         {
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[a-zA-Z_\\.][a-zA-Z0-9_\\.\\$]*"
+            "value": "[0-9][fb]"
           },
           "named": true,
           "value": "symbol"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "operand_modifier"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
         }
       ]
     },
@@ -569,6 +583,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "register"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_operand_symbol"
                 },
                 {
                   "type": "SEQ",
@@ -870,4 +888,3 @@
   "inline": [],
   "supertypes": []
 }
-

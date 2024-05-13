@@ -20,7 +20,7 @@ module.exports = grammar({
       $.assignment
     ),
 
-    label: $ => /[a-zA-Z_\.\$][a-zA-Z0-9_\.\$]*:/,
+    label: $ => /([a-zA-Z_\.\$][a-zA-Z0-9_\.\$]*|[0-9]):/,
 
     directive: $ => seq(
       $.directive_name,
@@ -97,9 +97,12 @@ module.exports = grammar({
     ),
 
      // symbols in operands cannot start with $
-    _operand_symbol: $ => seq(
-      alias(/[a-zA-Z_\.][a-zA-Z0-9_\.\$]*/, $.symbol),
-      optional($.operand_modifier)
+    _operand_symbol: $ => choice(
+      seq(
+        alias(/[a-zA-Z_\.][a-zA-Z0-9_\.\$]*/, $.symbol),
+        optional($.operand_modifier)
+      ),
+      alias(/[0-9][fb]/, $.symbol)
     ),
 
     operand_modifier: $ => /@[a-zA-Z0-9]+/,
@@ -111,6 +114,7 @@ module.exports = grammar({
         '(',
         choice(
           $.register,
+          $._operand_symbol,
           seq(',', $._displacement_expression_offset),
           seq(
             optional(choice(',', seq($.register, ','))),
